@@ -1,6 +1,6 @@
 # Autocomplete API Drill
 
-Implement an autocomplete that pulls fruit data from `https://www.fruityvice.com/api/fruit/all`.
+Implement an autocomplete that pulls fruit data from `http://localhost:3001/query?search=`.
 
 ## Requirements
 
