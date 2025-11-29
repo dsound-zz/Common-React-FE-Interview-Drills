@@ -1,43 +1,93 @@
-import { useState } from "react"
+import { useEffect, useMemo, useState } from 'react';
 
-interface AccordionItem {
-  title: string
-  content: string
-}
-
-const items: AccordionItem[] = [
-  { title: 'Section 1', content: 'Content for section 1' },
-  { title: 'Section 2', content: 'Content for section 2' },
-  { title: 'Section 3', content: 'Content for section 3' }
+const items = [
+  'Apple', 'Apricot', 'Avocado',
+  'Banana', 'Blueberry',
+  'Cherry', 'Coconut', 'Cranberry',
+  'Date',
+  'Elderberry',
+  'Fig',
+  'Grape', 'Grapefruit', 'Guava',
+  'Kiwi',
+  'Lemon', 'Lime', 'Lychee',
+  'Mango', 'Melon',
+  'Orange',
+  'Papaya', 'Peach', 'Pear', 'Pineapple', 'Plum',
+  'Raspberry',
+  'Strawberry',
+  'Watermelon'
 ]
 
-function App() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+const highlightedText = (text: string, query: string) => {
+  if (!query) return text;
+  
+  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  if (index === -1) return text;
+  
+  const before = text.slice(0, index);
+  const match = text.slice(index, index + query.length);
+  const after = text.slice(index + query.length);
+  
+  return (
+    <>
+      {before}
+      <strong>{match}</strong>
+      {after}
+    </>
+  );
+}
 
-  const handleOpenAccordian = (idx: number) => {
-    if (openIndex === idx) {
-      setOpenIndex(null)
+const normalize = (str: string) => str.toLocaleLowerCase()
+
+const matches = (item: string, query: string) => normalize(item).includes(normalize(query))
+
+const isExactMatch = (query: string) => items.some(item => normalize(item) === normalize(query))
+
+
+function App() {
+  const [query, setQuery] = useState<string>("")
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
+
+  useEffect(() => {
+    if (!query) {
+      setIsOpen(false)
       return
     }
-    setOpenIndex(idx)
-  }
+
+    if (isExactMatch(query)) {
+      setIsOpen(false)
+      return
+    }
+
+    setIsOpen(true)
+  }, [query])
+
+  const filteredItems = useMemo(() => {
+    if (!query) return []  
+    return items.filter((item) => matches(item, query))
+  }, [query])
+
   return (
     <div className="app">
-      <h1>Accordion</h1>
+      <h1>Autocomplete</h1>
       <div className="container">
-        {items.map((item, index) => {
-          const isOpen = index === openIndex
-          return (
-          <div key={item.title} className={`item ${isOpen ? "open" : ""}`}>
-            <div className="heading-row">
-            <h3 className="title" onClick={() => handleOpenAccordian(index)}>{item.title}</h3><span>{isOpen ? "-" : "+"}</span></div>
-            {isOpen ? (   
-            <p className="content">{item.content}</p>
-            ) : null}
-          </div>
-          )
-        })}
-      </div>
+        <input value={query} onChange={(e) => { 
+          setQuery(e.target.value);
+          setIsOpen(true)
+          } } />
+        {isOpen ? (
+        <ul>
+          {filteredItems?.map((item) => (
+          <li key={item} className="item" onClick={() => {
+            setQuery(item);
+          }}
+            >
+              {highlightedText(item, query)}</li>
+          ))}
+        </ul>
+        ) : null}
+    </div>
     </div>
   )
 }
