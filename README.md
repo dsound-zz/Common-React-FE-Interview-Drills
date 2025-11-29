@@ -5,7 +5,7 @@ This repo keeps each practice drill in its own folder while the `src/` directory
 ## Quick start with `swap-drill.sh`
 
 1. Run `npm install`
-2. Choose a drill from the available list: `todo-list`, `autocomplete`, `sortable-table`, `pagination`, `timer`, `modal`, `grid-toggle`, `tabs`, `accordion`, `fetch-demo`.
+2. Choose a drill from the available list: `todo-list`, `autocomplete`, `autocomplete-api`, `sortable-table`, `pagination`, `timer`, `modal`, `grid-toggle`, `tabs`, `accordion`, `fetch-demo`.
 3. Run `./swap-drill.sh <drill-name>` from the repo root; e.g. `./swap-drill.sh pagination`.
 4. The script copies `main.tsx`, `App.tsx`, and `index.css` (if present) from that drill folder into `src/`, replacing what was there.
 5. Run `npm run dev` (or your preferred Vite command) to start the dev server with the newly swapped drill.

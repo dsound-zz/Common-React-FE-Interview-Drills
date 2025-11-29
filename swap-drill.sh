@@ -4,7 +4,7 @@
 
 DRILLS_DIR="."
 SRC_DIR="./src"
-AVAILABLE_DRILLS=("todo-list" "autocomplete" "sortable-table" "pagination" "timer" "modal" "grid-toggle" "tabs" "accordion" "fetch-demo")
+AVAILABLE_DRILLS=("todo-list" "autocomplete" "autocomplete-api" "sortable-table" "pagination" "timer" "modal" "grid-toggle" "tabs" "accordion" "fetch-demo")
 
 # Function to show usage
 show_usage() {
