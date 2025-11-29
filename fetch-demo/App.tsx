@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
 
 interface Post {
   id: number
   title: string
   body: string
 }
+
+const POSTS_API = `https://jsonplaceholder.typicode.com/posts?_limit=5`
+const POST_POSTS_API = `https://jsonplaceholder.typicode.com/posts`
 
 function App() {
   return (

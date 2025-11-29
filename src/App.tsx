@@ -1,94 +1,109 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from "react"
 
-const items = [
-  'Apple', 'Apricot', 'Avocado',
-  'Banana', 'Blueberry',
-  'Cherry', 'Coconut', 'Cranberry',
-  'Date',
-  'Elderberry',
-  'Fig',
-  'Grape', 'Grapefruit', 'Guava',
-  'Kiwi',
-  'Lemon', 'Lime', 'Lychee',
-  'Mango', 'Melon',
-  'Orange',
-  'Papaya', 'Peach', 'Pear', 'Pineapple', 'Plum',
-  'Raspberry',
-  'Strawberry',
-  'Watermelon'
-]
-
-const highlightedText = (text: string, query: string) => {
-  if (!query) return text;
-  
-  const index = text.toLowerCase().indexOf(query.toLowerCase());
-  if (index === -1) return text;
-  
-  const before = text.slice(0, index);
-  const match = text.slice(index, index + query.length);
-  const after = text.slice(index + query.length);
-  
-  return (
-    <>
-      {before}
-      <strong>{match}</strong>
-      {after}
-    </>
-  );
+interface Post {
+  id: number
+  title: string
+  body: string
 }
 
-const normalize = (str: string) => str.toLocaleLowerCase()
-
-const matches = (item: string, query: string) => normalize(item).includes(normalize(query))
-
-const isExactMatch = (query: string) => items.some(item => normalize(item) === normalize(query))
-
+const POSTS_API = `https://jsonplaceholder.typicode.com/posts?_limit=5`
+const POST_POSTS_API = `https://jsonplaceholder.typicode.com/posts`
 
 function App() {
-  const [query, setQuery] = useState<string>("")
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [data, setData] = useState<Post[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [sending, setSending] = useState<boolean>(false)
+  const [title, setTitle] = useState<string>("")
+  const [body, setBody] = useState<string>("")
 
+  const sendDisabled = title.length === 0 || body.length === 0
+
+  const loadPosts = async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const res = await fetch(POSTS_API)
+      const data = await res.json()
+      setData(data)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to send request"
+      setError(msg);
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    if (!query) {
-      setIsOpen(false)
+    loadPosts()
+  }, [])
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault()
+    setSending(true)
+    setError(null)
+
+    if (sendDisabled) {
+      setError("Title and Body must not be empty")
+      setSending(false)
       return
     }
 
-    if (isExactMatch(query)) {
-      setIsOpen(false)
-      return
+    try {
+      const res = await fetch(POST_POSTS_API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: Date.now(),
+          title,
+          body
+        })
+
+      })
+
+      const newPost = await res.json()
+      setData(prev => [newPost, ...prev])
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to send request"
+      setError(msg);
+
+    } finally {
+      setSending(false)
+      setTitle("")
+      setBody("")
     }
-
-    setIsOpen(true)
-  }, [query])
-
-  const filteredItems = useMemo(() => {
-    if (!query) return []  
-    return items.filter((item) => matches(item, query))
-  }, [query])
+  }
 
   return (
-    <div className="app">
-      <h1>Autocomplete</h1>
-      <div className="container">
-        <input value={query} onChange={(e) => { 
-          setQuery(e.target.value);
-          setIsOpen(true)
-          } } />
-        {isOpen ? (
-        <ul>
-          {filteredItems?.map((item) => (
-          <li key={item} className="item" onClick={() => {
-            setQuery(item);
-          }}
-            >
-              {highlightedText(item, query)}</li>
-          ))}
-        </ul>
-        ) : null}
-    </div>
-    </div>
+    <>
+      <div className="app">
+        <h1>Fetch Demo</h1>
+        {loading && <div>Loading...</div>}
+        {sending && <div>Sending...</div>}
+        {error && <div>{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="input-row">
+            <input placeholder="Enter title" onChange={(e) => setTitle(e.target.value)} value={title} />
+            <button disabled={sendDisabled} type="submit">Submit</button></div>
+          <textarea placeholder="Enter body" onChange={(e) => setBody(e.target.value)} value={body} />
+        </form>
+
+        <main className="container">
+          {data.map((d) => {
+            return (
+              <div className="posts" key={d.id}>
+                <h2>{d.title}</h2>
+                <p>{d.body}</p>
+              </div>
+            )
+          })}
+        </main>
+      </div>
+    </>
   )
 }
 
