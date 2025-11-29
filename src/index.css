@@ -1,5 +1,49 @@
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
+  padding: 2rem;
+}
+
+.app {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.heading-row {
+  display: flex;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  padding: 1rem;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.8s ease;
+}
+
+.item.open {
+  max-height: 200px;
+}
+
+.content {
+  opacity: 1;
+  transition: opacity 0.6s ease;
 }
