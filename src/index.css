@@ -9,52 +9,33 @@ body {
   padding: 2rem;
 }
 
-.app {
-  margin: 0 auto;
-  max-width: 700px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(8, 40px);
+  gap: 0;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.input-row {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-input, button, textarea, posts {
-  border-radius: 8px;
-}
-
-input {
-  padding: 0.25rem;
-}
-
-button {
-  padding: 0.5rem;
-  background: #3b82f6;
-}
-
-textarea {
-  max-width: 300px;
-  padding: 0.25rem;
-
-}
-
-.posts {
-  border: 1px #eee solid;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: .5rem;
+  align-items: center;
+  justify-content: center;
 }
 
 
+.cell.light {
+  background: #f0d9b5;
+}
+
+.cell.dark {
+  background: #b58863;
+}
+
+.piece {
+  background: slategray;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
