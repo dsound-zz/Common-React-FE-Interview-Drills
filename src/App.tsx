@@ -1,55 +1,39 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from "react"
+
+const items = Array.from({ length: 47 }, (_, i) => `Item ${i + 1}`)
+const ITEMS_PER_PAGE = 10
 
 function App() {
-  const [elapsedTime, setElapsedTime] = useState<number>(0)
-  const [isRunning, setIsRunning] = useState<boolean>(false)
-  const startTimerRef = useRef<any>(0)
-  const intervalRef = useRef<any>(null)
-  
-  const formatTime = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000)
-    const minutes = Math.floor(totalSeconds / 60)
-    const seconds = totalSeconds % 60
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  const [page, setPage] = useState<number>(1)
+
+  const paginator = () => {
+    const offset = (page - 1) * ITEMS_PER_PAGE 
+
+    return items.slice(offset, offset +  ITEMS_PER_PAGE)
   }
 
-  useEffect(() => {
-    if (isRunning) {
-      startTimerRef.current = Date.now() - elapsedTime
-      intervalRef.current = setInterval(() => {
-        setElapsedTime(Date.now() - startTimerRef.current)
-      }, 10)
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current) 
-        intervalRef.current = null
-      }
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
-  }, [isRunning, elapsedTime])
-
-  const handleStart = () => setIsRunning(true) 
-  const handleStop = () => setIsRunning(false) 
-  const handleReset = () => {
-    setElapsedTime(0) 
-    setIsRunning(false) 
+  const handlePrev = () => {
+    setPage(prev => prev - 1)
   }
 
+  const handleNext = () => {
+    setPage(prev => prev + 1)
+  }
+
+console.log(items.length)
   return (
     <div className="app">
-      <h1>Timer</h1>
-      <div className="timer-buttons">
-        <button onClick={() => handleStart()}>Start</button>
-        <button onClick={() => handleStop()}>Stop</button>
-        <button onClick={() => handleReset()}>Reset</button>
+      <h1>Pagination</h1>
+      <div className="pages">
+        {paginator().map((page) => (
+          <div key={page}>{page}</div>
+        ))}
       </div>
-      <div className="counter">
-        {formatTime(elapsedTime)}
+      <div className="buttons">
+        <button disabled={page === 1} onClick={handlePrev}>Prev</button>
+        <div>current page: {page} number of pages {items.length}</div>
+        <button disabled={page === Math.ceil(items.length / ITEMS_PER_PAGE)} onClick={handleNext}>Next</button>
+
       </div>
     </div>
   )
