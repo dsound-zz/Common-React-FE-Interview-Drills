@@ -1,95 +1,89 @@
-import { useEffect, useMemo, useState } from 'react';
+// import { useDebounce } from './hooks/useDebounce'
 
-const items = [
-  'Apple', 'Apricot', 'Avocado',
-  'Banana', 'Blueberry',
-  'Cherry', 'Coconut', 'Cranberry',
-  'Date',
-  'Elderberry',
-  'Fig',
-  'Grape', 'Grapefruit', 'Guava',
-  'Kiwi',
-  'Lemon', 'Lime', 'Lychee',
-  'Mango', 'Melon',
-  'Orange',
-  'Papaya', 'Peach', 'Pear', 'Pineapple', 'Plum',
-  'Raspberry',
-  'Strawberry',
-  'Watermelon'
-]
+import { useEffect, useState } from "react"
 
-const highlightedText = (text: string, query: string) => {
-  if (!query) return text;
-  
-  const index = text.toLowerCase().indexOf(query.toLowerCase());
-  if (index === -1) return text;
-  
-  const before = text.slice(0, index);
-  const match = text.slice(index, index + query.length);
-  const after = text.slice(index + query.length);
-  
-  return (
-    <>
-      {before}
-      <strong>{match}</strong>
-      {after}
-    </>
-  );
-}
-
-const normalize = (str: string) => str.toLocaleLowerCase()
-
-const matches = (item: string, query: string) => normalize(item).includes(normalize(query))
-
-const isExactMatch = (query: string) => items.some(item => normalize(item) === normalize(query))
-
+const API_URL = 'http://localhost:3001/query?search='
 
 function App() {
   const [query, setQuery] = useState<string>("")
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [results, setResults] = useState<string[]>([])
+  const [isOpen, setIsOpen] = useState<boolean>(false) 
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
+  const debounced = useDebounce(query, 300) 
 
   useEffect(() => {
-    if (!query) {
-      setIsOpen(false)
+    if (!debounced) {
+      setResults([])
       return
     }
 
-    if (isExactMatch(query)) {
-      setIsOpen(false)
-      return
+    const controller = new AbortController()
+
+    async function fetchResults() {
+      setLoading(true) 
+      setError(null)
+
+    try {
+      const res = await fetch(`${API_URL}${debounced}`, {
+        signal: controller.signal
+      })
+
+      if (!res.ok) throw new Error("Failed to fetch")
+      
+      const data = await res.json() 
+      setResults(data)
+    } catch (err) {
+      if (err?.name !== "AbortError") {
+        setError("Something went wrong")
+      }
+    } finally {
+      setLoading(false)
     }
+  }
 
-    setIsOpen(true)
-  }, [query])
+    fetchResults()
 
-  const filteredItems = useMemo(() => {
-    if (!query) return []  
-    return items.filter((item) => matches(item, query))
-  }, [query])
+    return () => controller.abort()
+    
+  }, [debounced])
+
+
 
   return (
     <div className="app">
-      <h1>Autocomplete</h1>
+      <h1>Autocomplete API</h1>
+      <p className="hint">
+        Use the Fruityvice `http://localhost:3001/query?search=` endpoint, keep the input controlled, and add
+        the keyboard/mouse behaviors described in the README.
+      </p>
       <div className="container">
-        <input value={query} onChange={(e) => { 
-          setQuery(e.target.value);
-          setIsOpen(true)
-          } } />
-        {isOpen ? (
-        <ul>
-          {filteredItems?.map((item) => (
-          <li key={item} className="item" onClick={() => {
-            setQuery(item);
-          }}
-            >
-              {highlightedText(item, query)}</li>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search..."
+        />
+        <p className="status">status: {loading && <div>Loading...</div> || error && <div>Error...</div>}</p>
+        <ul className="suggestions">
+          {results.map((result) => (
+            <div key={result}>{result}</div>
           ))}
         </ul>
-        ) : null}
-    </div>
+      </div>
     </div>
   )
 }
 
 export default App
+
+const useDebounce = (q: string, delay = 200) => {
+  const [debounced, setDebounced] = useState(q) 
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(q), delay)
+    return () => clearTimeout(id) 
+  }, [q, delay])
+
+  return debounced
+}
