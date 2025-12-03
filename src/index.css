@@ -15,9 +15,40 @@ body {
 }
 
 .app {
-  width: min(460px, 100%);
-  background: #fff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  width: 600px;
+  margin: 0 auto; 
 }
+
+.container {
+  max-width: 300px;
+  position: relative;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+ul { 
+  list-style-type: none;
+}
+
+input {
+  padding: 0.50rem;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  margin-top: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0;
+}
+
+
+
