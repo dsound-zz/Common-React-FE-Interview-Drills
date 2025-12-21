@@ -47,11 +47,13 @@ cp "$DRILL_PATH/index.css" "$SRC_DIR/" 2>/dev/null || echo "Note: No index.css f
 # Special handling for autocomplete-api: copy hooks and fruits-server directories
 if [ "$DRILL_NAME" == "autocomplete-api" ]; then
     if [ -d "$DRILL_PATH/hooks" ]; then
+        rm -rf "$SRC_DIR/hooks"
         cp -r "$DRILL_PATH/hooks" "$SRC_DIR/"
         echo "✓ Copied hooks directory"
     fi
     if [ -d "$DRILL_PATH/fruits-server" ]; then
         # Copy fruits-server excluding node_modules
+        rm -rf "$SRC_DIR/fruits-server"
         mkdir -p "$SRC_DIR/fruits-server"
         find "$DRILL_PATH/fruits-server" -mindepth 1 -maxdepth 1 ! -name 'node_modules' -exec cp -r {} "$SRC_DIR/fruits-server/" \;
         echo "✓ Copied fruits-server directory"
