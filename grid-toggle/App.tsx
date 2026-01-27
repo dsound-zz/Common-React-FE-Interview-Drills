@@ -1,9 +1,5 @@
-function App() {
-  return (
-    <div className="app">
-      <h1>Grid Toggle</h1>
-    </div>
-  )
-}
+const GRID_SIZE = 8
+
+function App() {}
 
 export default App
