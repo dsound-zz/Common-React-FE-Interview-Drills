@@ -20,3 +20,7 @@ coverage/
 /.vercel/
 /.turbo/
 /.env.local
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
+src/**/*.d.ts.map
