@@ -43,6 +43,7 @@ echo "Swapping to drill: $DRILL_NAME"
 cp "$DRILL_PATH/main.tsx" "$SRC_DIR/"
 cp "$DRILL_PATH/App.tsx" "$SRC_DIR/"
 cp "$DRILL_PATH/index.css" "$SRC_DIR/" 2>/dev/null || echo "Note: No index.css found for $DRILL_NAME"
+cp "$DRILL_PATH/fixture.ts" "$SRC_DIR/" 2>/dev/null || echo "Note: No fixture.ts found for $DRILL_NAME"
 
 # Special handling for autocomplete-api: copy hooks and fruits-server directories
 if [ "$DRILL_NAME" == "autocomplete-api" ]; then
