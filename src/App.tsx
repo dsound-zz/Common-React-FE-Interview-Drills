@@ -1,35 +1,41 @@
 import { useState } from 'react'
 
-const GRID_SIZE = 8
-
-const board = Array.from({ length: GRID_SIZE }, (_, row) =>
-  Array.from({ length: GRID_SIZE }, (_, col) => ({ row, col }))
-)
+const items = Array.from({ length: 47 }, (_, i) => `Item ${i + 1}`)
+const ITEMS_PER_PAGE = 10
 
 function App() {
-  const [active, setActive] = useState<{ row: Number; col: number } | null>(
-    null
-  )
+  const [page, setPage] = useState<number>(1)
+
+  const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE)
+
+  const pages = () => {
+    const start = (page - 1) * ITEMS_PER_PAGE
+    const end = page * ITEMS_PER_PAGE
+
+    return items.slice(start, end)
+  }
 
   return (
     <div className="app">
-      <h1>Grid Toggle</h1>
-      <div className="board">
-        {board.map(row =>
-          row.map(cell => {
-            const { row, col } = cell
-            const isDark = (row + col) % 2 === 1
+      <h1>Pagination</h1>
+      <div className="list-container">
+        {pages().map(item => (
+          <div key={item}>{item}</div>
+        ))}
+      </div>
+      <h3>Page Number: {page}</h3>
+      <h3>Total Pages: {totalPages}</h3>
 
-            const isActive = active?.row === row && active?.col === col
-            return (
-              <div
-                key={`${row}-${col}`}
-                className={`cell ${isDark ? 'dark' : 'light'} ${isActive ? 'active' : ''}`}
-                onClick={() => setActive({ row, col })}
-              />
-            )
-          })
-        )}
+      <div className="button-container">
+        <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>
+          Prev
+        </button>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage(p => p + 1)}
+        >
+          Next
+        </button>
       </div>
     </div>
   )

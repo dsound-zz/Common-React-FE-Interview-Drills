@@ -12,25 +12,16 @@ body {
   padding: 2rem;
 }
 
-.board {
-  display: grid;
-  grid-template-columns: repeat(8, 40px);
+.app {
+  padding: 30px;
+  width: 300px;
 }
 
-.cell {
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
+h1 {
+  margin-bottom: 40px;
 }
 
-.cell.light {
-  background: #eee;
-}
-
-.cell.dark {
-  background: #999;
-}
-
-.cell.active {
-  background: blue;
+.list-container {
+  height: 240px;
+  overflow: hidden;
 }
