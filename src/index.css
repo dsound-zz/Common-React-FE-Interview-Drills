@@ -12,26 +12,17 @@ body {
   padding: 2rem;
 }
 
-table {
-  width: 100%;
-  max-width: 500px;
-  border-collapse: collapse;
-  font-size: 14px;
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
 }
 
-table th,
-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
+.board .cell {
+  height: 100px;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-table th {
-  font-weight: 600;
-  background: #f9fafb;
-  color: #373151;
-}
-
-table tbody tr:hover {
-  background: #f3f4f6;
+  border: 2px solid #333;
 }
