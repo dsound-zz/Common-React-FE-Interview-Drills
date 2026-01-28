@@ -12,16 +12,26 @@ body {
   padding: 2rem;
 }
 
-.app {
-  padding: 30px;
-  width: 300px;
+table {
+  width: 100%;
+  max-width: 500px;
+  border-collapse: collapse;
+  font-size: 14px;
 }
 
-h1 {
-  margin-bottom: 40px;
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.list-container {
-  height: 240px;
-  overflow: hidden;
+table th {
+  font-weight: 600;
+  background: #f9fafb;
+  color: #373151;
+}
+
+table tbody tr:hover {
+  background: #f3f4f6;
 }
