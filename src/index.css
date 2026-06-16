@@ -5,24 +5,32 @@
 }
 
 body {
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   padding: 2rem;
 }
 
-.board {
-  display: grid;
-  grid-template-columns: repeat(3, 100px);
+.guesses {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-decoration: none;
 }
 
-.board .cell {
-  height: 100px;
-  font-size: 2rem;
+.guess-row {
+  display: flex;
+}
+
+.tile {
+  border: 1px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  border: 2px solid #333;
+  width: 30px;
+  height: 30px;
+  text-align: center;
 }
+
+.tile.tile--correct { background: #6aaa64}
+.tile.tile--present { background: #c9b458}
+.tile.tile--absent { background: #787c7e}

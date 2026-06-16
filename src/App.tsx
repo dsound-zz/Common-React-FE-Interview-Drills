@@ -1,58 +1,76 @@
-import { useState } from 'react'
+import { useState } from "react"
 
-const winners = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-]
+const solution = "REACT"
+
+type GameStatus = "playing" | "won" | "lost"
+type TileStatus = "correct" | "present" | "absent" | "empty" | "tbd"
+
+interface TileData {
+  letter: string;
+  status: TileStatus;
+}
+
+function evaluateGuess(guess: string): TileData[] {
+  const result: TileData[] = Array(5).fill(null).map((_, i) => ({
+    letter: guess[i],
+    status: 'absent' as TileStatus
+  }))
+
+  const solutionChars = solution.split("")
+  const guessChars = guess.split("")
+
+  // Pass 1: correct positions (green)
+  guessChars.forEach((char, i) => {
+    if (char === solutionChars[i]) {
+      result[i].status = "correct"
+      solutionChars[i] = "#" // consume
+      guessChars[i] = "*" // mark as done 
+    }
+  })
+
+  // Pass 2: present but wrong position (yellow)
+  // Two passes because of the duplicate letter problem
+  guessChars.forEach((char, i) => {
+    if (char === "*") return
+    const idx = solutionChars.indexOf(char)
+    // if that index does exist?
+    if (idx !== -1) {
+      // mark the status as present (we're not doing correct anymore)
+      result[i].status = 'present'
+      // again we consume
+      solutionChars[idx] = '#'
+    }
+  })
+
+  return result
+}
+
+
 
 function App() {
-  const [board, setBoard] = useState(Array(9).fill(null))
-  const [player, setPlayer] = useState<string>('X')
+  const [guesses, setGuesses] = useState<string[]>([])
+  const [currentGuess, setCurrentGuess] = useState<string>("")
+  const [gameStatus, setGameStatus] = useState<GameStatus>('playing')
 
-  function turn(index: number) {
-    if (board[index] || isWinner) return
-
-    setBoard(prev => {
-      const next = [...prev]
-      next[index] = player
-      return next
-    })
-
-    setPlayer(prev => (prev === 'X' ? 'O' : 'X'))
+  function handleSubmit() {
+    setGuesses(prev => [...prev, currentGuess])
+    setCurrentGuess('')
   }
-
-  function getWinner(board: any): string | null {
-    for (const [a, b, c] of winners) {
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a]
-      }
-    }
-    return null
-  }
-
-  const isWinner = getWinner(board)
 
   return (
     <div className="app">
-      <h1>Tic Tac Toe</h1>
-      <div className="board">
-        {board.map((cell, index) => (
-          <div
-            key={`${cell}-${index}`}
-            className="cell"
-            onClick={() => turn(index)}
-          >
-            {cell}
+      <h1>Wordle</h1>
+      <input value={currentGuess} onChange={e => setCurrentGuess(e.target.value.toUpperCase())} />
+      <button disabled={currentGuess.length !== 5} onClick={handleSubmit}>Submit</button>
+      <div className="guesses">
+        {guesses.map((guess, guessIndex) => (
+          <div key={guessIndex} className="guess-row">
+            {evaluateGuess(guess).map(({ letter, status }, i) => (
+              <div key={i} className={`tile tile--${status}`}>{letter}</div>
+            ))}
           </div>
         ))}
       </div>
-      <h1>The winner is: {isWinner ?? ''}</h1>
     </div>
   )
 }
